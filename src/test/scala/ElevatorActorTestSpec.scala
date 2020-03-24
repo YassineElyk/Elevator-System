@@ -12,7 +12,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 
 
-class ElevatorActorTestSpec extends TestKit(ActorSystem("MySpec")) with ImplicitSender
+class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with ImplicitSender
   with AnyWordSpecLike with Matchers with BeforeAndAfterAll {
 
   val config = ElevatorConfig(ElevatorId(1), 7, Duration.ofSeconds(4), Duration.ofSeconds(6), true)
