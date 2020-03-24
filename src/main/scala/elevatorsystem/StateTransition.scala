@@ -1,7 +1,7 @@
 package elevatorsystem
 
 import elevatorsystem.model.ElevatorState
-import elevatorsystem.model.RequestModel._
+import elevatorsystem.model.Messages.ElevatorRequest
 
 
 trait StateTransition {

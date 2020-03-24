@@ -2,24 +2,24 @@ package elevatorsystem.actor
 
 import akka.actor.{Actor, Timers}
 import elevatorsystem.ElevatorStateTransitions
-import elevatorsystem.model.RequestModel._
+import elevatorsystem.model.Messages._
 import elevatorsystem.model.TimerModel._
 import elevatorsystem.model._
 
 
 class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with ElevatorStateTransitions {
 
-  override def receive: Receive = Idle(NoDestinations(Floor(0), initDestinations))
+  override def receive: Receive = Idle(NoRequest(Floor(0), initReceivedRequests(conf.floorCount)))
 
-  def Idle(state: NoDestinations): Receive = {
-    case GetStatus() => sender ! ElevatorStatus(state)
+  def Idle(state: NoRequest): Receive = {
+    case GetStatus => sender ! ElevatorStatus(conf.id, state)
     case request: ElevatorRequest =>
       setNextFloorTimer
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
   }
 
   def Active(state: Moving): Receive = {
-    case GetStatus() => sender ! ElevatorStatus(state)
+    case GetStatus => sender ! ElevatorStatus(conf.id, state)
     case request: ElevatorRequest =>
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
     case step: NextFloorReached =>
@@ -33,7 +33,7 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
   }
 
   def Waiting(state: Waiting): Receive = {
-    case GetStatus() => sender ! ElevatorStatus(state)
+    case GetStatus => sender ! ElevatorStatus(conf.id, state)
     case request: ElevatorRequest =>
       context.become(Waiting(state.processRequest(request).asInstanceOf[Waiting]))
     case step: WaitingCompleted =>
@@ -42,8 +42,8 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
         case s: Moving =>
           setNextFloorTimer
           context.become(Active(nextState.asInstanceOf[Moving]))
-        case s: NoDestinations =>
-          context.become(Idle(nextState.asInstanceOf[NoDestinations]))
+        case s: NoRequest =>
+          context.become(Idle(nextState.asInstanceOf[NoRequest]))
       }
   }
 

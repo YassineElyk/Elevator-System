@@ -1,7 +1,7 @@
 package elevatorsystem
 
 import elevatorsystem.model.ElevatorState
-import elevatorsystem.model.RequestModel.ElevatorRequest
+import elevatorsystem.model.Messages.ElevatorRequest
 
 trait StateTransitionImplicit extends StateTransition {
   implicit class ElevatorTransitionHelper[S <: ElevatorState](from: S) {
