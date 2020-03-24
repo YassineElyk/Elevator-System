@@ -4,7 +4,7 @@
 		module="elevator-coding-challenge_2.12"
 		revision="0.1"
 		status="integration"
-		publication="20200323104107"
+		publication="20200324001314"
 	>
 		<description>
 		Elevator-Coding-Challenge
@@ -32,8 +32,9 @@
 	<dependencies>
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.12.7" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.12.7" conf="scala-tool->default,optional(default);compile->default(compile)"/>
-		<dependency org="com.typesafe.akka" name="akka-actor-typed_2.12" rev="2.6.4" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-actor_2.12" rev="2.6.4" conf="compile->default(compile)"/>
+		<dependency org="com.typesafe.akka" name="akka-testkit_2.12" rev="2.6.4" conf="test->default(compile)"/>
+		<dependency org="org.scalatest" name="scalatest_2.12" rev="3.1.1" conf="test->default(compile)"/>
 		<dependency org="org.typelevel" name="cats-core_2.12" rev="2.1.0" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.scala-logging" name="scala-logging_2.12" rev="3.9.2" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>

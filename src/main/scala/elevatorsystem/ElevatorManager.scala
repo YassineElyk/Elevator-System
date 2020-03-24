@@ -1,5 +1,0 @@
-package elevatorsystem
-
-trait ElevatorManager {
-
-}
