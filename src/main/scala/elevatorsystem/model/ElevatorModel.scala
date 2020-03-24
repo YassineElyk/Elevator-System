@@ -1,7 +1,8 @@
 package elevatorsystem.model
 
-import cats.Monoid
 import elevatorsystem.model.RequestModel._
+
+import cats.Monoid
 
 
 sealed trait ElevatorState
@@ -36,8 +37,8 @@ case class NoDirection() extends Direction
 case class ElevatorConfig(
                            id: ElevatorId,
                            floorCount: Int,
-                           travelInterval: java.time.Duration,
-                           unloadingInterval: java.time.Duration,
+                           travelDuration: java.time.Duration,
+                           responseDuration: java.time.Duration,
                            manualStepping: Boolean = false
                          )
 
@@ -76,5 +77,5 @@ object RequestModel{
 
 
 sealed trait statusMessage
-case class getStatus() extends statusMessage
-case class ElevatorStatus(state: ElevatorState) extends statusMessage
+case class GetStatus() extends statusMessage
+case class ElevatorStatus(id: ElevatorId, state: ElevatorState) extends statusMessage

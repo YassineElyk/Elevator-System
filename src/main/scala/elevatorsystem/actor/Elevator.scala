@@ -12,14 +12,14 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
   override def receive: Receive = Idle(NoDestinations(Floor(0), initDestinations))
 
   def Idle(state: NoDestinations): Receive = {
-    case getStatus() => sender ! ElevatorStatus(state)
+    case GetStatus() => sender ! ElevatorStatus(state)
     case request: ElevatorRequest =>
       setNextFloorTimer
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
   }
 
   def Active(state: Moving): Receive = {
-    case getStatus() => sender ! ElevatorStatus(state)
+    case GetStatus() => sender ! ElevatorStatus(state)
     case request: ElevatorRequest =>
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
     case step: NextFloorReached =>
@@ -33,7 +33,7 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
   }
 
   def Waiting(state: Waiting): Receive = {
-    case getStatus() => sender ! ElevatorStatus(state)
+    case GetStatus() => sender ! ElevatorStatus(state)
     case request: ElevatorRequest =>
       context.become(Waiting(state.processRequest(request).asInstanceOf[Waiting]))
     case step: WaitingCompleted =>
@@ -48,8 +48,8 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
   }
 
 
-  def setNextFloorTimer: Unit = if (conf.manualStepping) timers.startSingleTimer(MovingToNextFloor, NextFloorReached, conf.travelInterval)
+  def setNextFloorTimer: Unit = if (conf.manualStepping) timers.startSingleTimer(MovingToNextFloor, NextFloorReached, conf.travelDuration)
 
-  def setWaitingTimer: Unit = if (conf.manualStepping) timers.startSingleTimer(WaitingAtDestination, WaitingCompleted, conf.unloadingInterval)
+  def setWaitingTimer: Unit = if (conf.manualStepping) timers.startSingleTimer(WaitingAtDestination, WaitingCompleted, conf.responseDuration)
 
 }

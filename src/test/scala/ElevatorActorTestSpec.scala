@@ -24,7 +24,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
   "The elevator Actor" must {
     "be correctly initialized" in {
-      elevator ! getStatus()
+      elevator ! GetStatus()
       expectMsg(
         ElevatorStatus(
           NoDestinations(
@@ -43,7 +43,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
     "Transit to Moving state after receiving first Request" in {
       elevator ! PickupRequest(Floor(1), Down())
-      elevator ! getStatus()
+      elevator ! GetStatus()
       expectMsg(
         ElevatorStatus(
           Moving(Up(), Floor(0), Some(Floor(1)), None,
@@ -63,7 +63,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     "Ignore floors with requests that have a different direction (Down) as long as a further request is present" in {
       elevator ! PickupRequest(Floor(6), Down())
       elevator ! NextFloorReached()
-      elevator ! getStatus()
+      elevator ! GetStatus()
       expectMsg(
         ElevatorStatus(
           Moving(Up(), Floor(1), Some(Floor(6)), Some(Floor(1)),
@@ -83,7 +83,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     "Answer requests that have the same direction (Up)" in {
       elevator ! PickupRequest(Floor(2), Up())
       elevator ! NextFloorReached()
-      elevator ! getStatus()
+      elevator ! GetStatus()
       expectMsg(
         ElevatorStatus(
           Waiting(Up(), Floor(2), Some(Floor(6)), Some(Floor(1)),
@@ -104,7 +104,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
   "Store requests that have been made with different directions (Up, Down) in the same floor and answer them" in {
     elevator ! PickupRequest(Floor(3), Down())
     elevator ! PickupRequest(Floor(3), Up())
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Up(), Floor(2), Some(Floor(6)), Some(Floor(1)),
@@ -122,7 +122,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Up(), Floor(3), Some(Floor(6)), Some(Floor(1)),
@@ -144,7 +144,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     elevator ! FloorRequest(Floor(4))
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Up(), Floor(4), Some(Floor(6)), Some(Floor(1)),
@@ -167,7 +167,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     elevator ! PickupRequest(Floor(5), Down())
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Up(), Floor(5), Some(Floor(6)), Some(Floor(1)),
@@ -188,7 +188,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
   "Answer furthest call even if it has an opposite direction" in {
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Up(), Floor(6), Some(Floor(6)), Some(Floor(1)),
@@ -208,7 +208,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
   "Switch directions after responding to the furthest upward call" in {
     elevator ! WaitingCompleted()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Moving(Down(), Floor(6), None, Some(Floor(1)),
@@ -231,7 +231,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     elevator ! NextFloorReached()
     elevator ! NextFloorReached()
     elevator ! NextFloorReached()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         Waiting(Down(), Floor(1), None, Some(Floor(1)),
@@ -251,7 +251,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
   "Become Idle again since all requests have been answered" in {
     elevator ! WaitingCompleted()
-    elevator ! getStatus()
+    elevator ! GetStatus()
     expectMsg(
       ElevatorStatus(
         NoDestinations(

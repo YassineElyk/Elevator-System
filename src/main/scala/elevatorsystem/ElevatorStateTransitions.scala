@@ -158,7 +158,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit {
   }
 
   def addDestination(request :ElevatorRequest, destinations: Map[Floor, RequestDirection]): Map[Floor, RequestDirection] = {
-    val oldRequestDirection = destinations.getOrElse(request.floor, Monoid[RequestDirection].empty) //Shouldn't happen that we dont find an instance in the map
+    val oldRequestDirection = destinations.getOrElse(request.floor, Monoid[RequestDirection].empty)
     request match {
       case r: FloorRequest =>
         destinations + (r.floor -> (RequestDirection(true, false, false) |+| oldRequestDirection))
