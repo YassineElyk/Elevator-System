@@ -1,5 +1,4 @@
-package elevatorsystem.model
-
+package model
 
 sealed trait ElevatorState
 

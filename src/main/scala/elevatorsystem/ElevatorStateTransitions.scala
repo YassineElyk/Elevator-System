@@ -1,9 +1,8 @@
 package elevatorsystem
 
-import elevatorsystem.model.Messages.ElevatorRequest
-import elevatorsystem.model.{Down, ElevatorConfig, ElevatorState, Floor, Moving, NoRequest, ReceivedRequestDirection, ReceivedRequestsProperties, Up, Waiting}
-
+import model.Messages.ElevatorRequest
 import cats.Monoid
+import model.{Down, ElevatorConfig, ElevatorState, Floor, Moving, NoRequest, ReceivedRequestDirection, ReceivedRequestsProperties, Up, Waiting}
 
 
 trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequestsProperties{

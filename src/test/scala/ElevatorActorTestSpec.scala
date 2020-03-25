@@ -1,12 +1,13 @@
 import java.time.Duration
 
 import elevatorsystem.actor.Elevator
-import elevatorsystem.model._
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import cats.kernel.Monoid
-import elevatorsystem.model.Messages._
-import elevatorsystem.model.TimerModel.{NextFloorReached, WaitingCompleted}
+import cli.Command
+import model.Messages._
+import model.{Down, ElevatorConfig, ElevatorId, Floor, Moving, NoRequest, ReceivedRequestDirection, ReceivedRequestsProperties, Up, Waiting}
+import model.TimerModel.{NextFloorReached, WaitingCompleted}
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
@@ -20,6 +21,10 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
   override def afterAll: Unit = {
     TestKit.shutdownActorSystem(system)
+  }
+
+  "" in {
+    println(Command.parse("land 12e").toString)
   }
 
   "The elevator Actor" must {

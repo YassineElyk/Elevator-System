@@ -1,4 +1,4 @@
-package elevatorsystem.model
+package model
 
 object Messages {
 
@@ -11,7 +11,5 @@ object Messages {
   case object GetStatus
 
   case object GetSystemStatus
-
-  case class SystemStatus()
 
 }

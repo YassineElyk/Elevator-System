@@ -2,7 +2,8 @@ package cli
 
 import cats.Show
 
-trait CliOutputImplicits {
+
+trait CommandLineImplicits {
 /*
   implicit val printabletype: Show[type] = ???
    foldmap on the map of destinations to create a big string that shows all the relevant ones

@@ -2,9 +2,9 @@ package elevatorsystem.actor
 
 import akka.actor.{Actor, Timers}
 import elevatorsystem.ElevatorStateTransitions
-import elevatorsystem.model.Messages._
-import elevatorsystem.model.TimerModel._
-import elevatorsystem.model._
+import model.Messages._
+import model.TimerModel._
+import model.{ElevatorConfig, Floor, Moving, NoRequest, Waiting}
 
 
 class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with ElevatorStateTransitions {

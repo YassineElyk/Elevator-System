@@ -1,6 +1,6 @@
-package elevatorsystem.model
+package model
 
-import elevatorsystem.model.Messages.{CallRequest, ElevatorRequest, LandingRequest}
+import Messages.{CallRequest, ElevatorRequest, LandingRequest}
 
 import cats.Monoid
 import cats.syntax.semigroup._
