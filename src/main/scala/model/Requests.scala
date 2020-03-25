@@ -1,6 +1,6 @@
 package model
 
-import Messages.{CallRequest, ElevatorRequest, LandingRequest}
+import Messages.{CallRequest, FloorRequest, LandRequest}
 
 import cats.Monoid
 import cats.syntax.semigroup._
@@ -15,10 +15,10 @@ trait ReceivedRequestsProperties {
     def empty = ReceivedRequestDirection(false, false, false)
   }
 
-  def addReceivedRequest(request :ElevatorRequest, destinations: Map[Floor, ReceivedRequestDirection]): Map[Floor, ReceivedRequestDirection] = {
+  def addReceivedRequest(request :FloorRequest, destinations: Map[Floor, ReceivedRequestDirection]): Map[Floor, ReceivedRequestDirection] = {
     val oldRequestDirection = destinations.getOrElse(request.floor, Monoid[ReceivedRequestDirection].empty)
     request match {
-      case r: LandingRequest =>
+      case r: LandRequest =>
         destinations + (r.floor -> (ReceivedRequestDirection(true, false, false) |+| oldRequestDirection))
       case r: CallRequest =>
         if (r.direction == Up()) destinations + (r.floor -> (ReceivedRequestDirection(false, true, false) |+| oldRequestDirection))

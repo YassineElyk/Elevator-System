@@ -13,14 +13,14 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
 
   def Idle(state: NoRequest): Receive = {
     case GetStatus => sender ! ElevatorStatus(conf.id, state)
-    case request: ElevatorRequest =>
+    case request: FloorRequest =>
       setNextFloorTimer
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
   }
 
   def Active(state: Moving): Receive = {
     case GetStatus => sender ! ElevatorStatus(conf.id, state)
-    case request: ElevatorRequest =>
+    case request: FloorRequest =>
       context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
     case step: NextFloorReached =>
       val nextState = state.next
@@ -34,7 +34,7 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
 
   def Waiting(state: Waiting): Receive = {
     case GetStatus => sender ! ElevatorStatus(conf.id, state)
-    case request: ElevatorRequest =>
+    case request: FloorRequest =>
       context.become(Waiting(state.processRequest(request).asInstanceOf[Waiting]))
     case step: WaitingCompleted =>
       val nextState = state.next

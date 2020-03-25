@@ -1,6 +1,9 @@
 package cli
 
+import model.Messages._
+
 import cats.Show
+import cats.syntax.show._
 
 
 trait CommandLineImplicits {
@@ -11,5 +14,11 @@ trait CommandLineImplicits {
   Show[cliCommandResponses]
   to show the command responses on the screen for example request/call received/ assigned to elevator Id
 */
+
+  implicit val ResponseShow = Show.show[Response] {
+    case r: SystemStatus => r.s
+    case r: CallResponse => ""
+    case r: LandResponse => ""
+  }
 
 }

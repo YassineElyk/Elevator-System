@@ -2,19 +2,20 @@ package cli
 
 import model.ElevatorSystemConfig
 
+import scopt.OptionParser
 
 object CommandLineOption{
 
-  val parser = new scopt.OptionParser[ElevatorSystemConfig]("Elevator system simulation") {
+  val parser = new OptionParser[ElevatorSystemConfig]("Elevator system simulation") {
 
-    opt[Int]('f', "floorCount").required().action((count, config) =>
-      config.copy(floorCount = count)).text("floorCount is an integer property")
-    opt[Int]('e', "elevatorCount").required().action((count, config) =>
-      config.copy(elevatorCount = count)).text("elevatorCount is an integer property")
-    opt[Int]('t', "travelDuration").required().action((duration, config) =>
-      config.copy(elevatorCount = duration)).text("elevatorCount is an integer property")
-    opt[Int]('w', "waitingDuration").required().action((duration, config) =>
-      config.copy(elevatorCount = duration)).text("elevatorCount is an integer property")
+    opt[Int]('f', "floorCount").action((count, config) =>
+      config.copy(floorCount = count))
+    opt[Int]('e', "elevatorCount").action((count, config) =>
+      config.copy(elevatorCount = count))
+    opt[Int]('t', "travelDuration").action((duration, config) =>
+      config.copy(elevatorCount = duration))
+    opt[Int]('w', "waitingDuration").action((duration, config) =>
+      config.copy(elevatorCount = duration))
 
   }
 

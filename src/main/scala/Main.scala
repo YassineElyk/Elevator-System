@@ -1,4 +1,4 @@
-import cli.CommandLineOption
+import cli.{CommandLineInterface, CommandLineOption}
 import elevatorsystem.ElevatorSystemController
 import model.ElevatorSystemConfig
 
@@ -11,9 +11,9 @@ object Main extends App {
 
   def startApp(config: ElevatorSystemConfig): Unit = {
     val controller: ElevatorSystemController = new ElevatorSystemController(config)
-    val cli: CommandLineInterfae = new CommandLineInterface(controller)
+    val cli: CommandLineInterface = new CommandLineInterface(controller)
 
-    controller.start
+    cli.start
   }
 
 }

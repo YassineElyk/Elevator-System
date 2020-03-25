@@ -1,6 +1,6 @@
 package elevatorsystem
 
-import model.Messages.ElevatorRequest
+import model.Messages.FloorRequest
 import cats.Monoid
 import model.{Down, ElevatorConfig, ElevatorState, Floor, Moving, NoRequest, ReceivedRequestDirection, ReceivedRequestsProperties, Up, Waiting}
 
@@ -10,7 +10,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
   def conf: ElevatorConfig
 
   implicit val NoRequestStateTransitions = new ElevatorTransition[NoRequest] {
-    override def processRequest(request: ElevatorRequest)(state: NoRequest): ElevatorState = {
+    override def processRequest(request: FloorRequest)(state: NoRequest): ElevatorState = {
       if (request.floor.num < state.currentFloor.num) {
         Moving(
           direction = Down(),
@@ -36,7 +36,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
   }
 
   implicit val MovingStateTransitions = new ElevatorTransition[Moving] {
-    override def processRequest(request: ElevatorRequest)(state: Moving): ElevatorState = {
+    override def processRequest(request: FloorRequest)(state: Moving): ElevatorState = {
       if (state.lastDestinationUp.isDefined && request.floor.num > state.lastDestinationUp.get.num) {
         state.copy(lastDestinationUp = Some(request.floor), destinations = addReceivedRequest(request, state.destinations))
       }
@@ -83,7 +83,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
   }
 
   implicit val WaitingStateTransitions = new ElevatorTransition[Waiting] {
-    override def processRequest(request: ElevatorRequest)(state: Waiting): ElevatorState = {
+    override def processRequest(request: FloorRequest)(state: Waiting): ElevatorState = {
       if (state.currentFloor.num == request.floor.num) state
       else if (state.lastDestinationUp.isDefined && request.floor.num > state.lastDestinationUp.get.num) {
         state.copy(lastDestinationUp = Some(request.floor), destinations = addReceivedRequest(request, state.destinations))

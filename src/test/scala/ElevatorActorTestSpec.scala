@@ -152,7 +152,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
   }
 
   "Answer floor requests" in {
-    elevator ! LandingRequest(Floor(4))
+    elevator ! LandRequest(Floor(4))
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
     elevator ! GetStatus
@@ -175,7 +175,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
   }
 
   "Respond to requests where a pickup and floor request have been made in the same floor" in {
-    elevator ! LandingRequest(Floor(5))
+    elevator ! LandRequest(Floor(5))
     elevator ! CallRequest(Floor(5), Down())
     elevator ! WaitingCompleted()
     elevator ! NextFloorReached()
