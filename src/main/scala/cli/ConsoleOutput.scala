@@ -1,11 +1,18 @@
 package cli
 
+
 import model.Messages._
-import cats.Show
 import model._
 
+import cats.Show
 
-trait CommandLineImplicits {
+
+trait ConsoleOutput {
+
+  /**
+    * Instance of cats type class Show and helper methods that serve to provide the console output messages
+    * needed by the application
+    */
 
   implicit val ResponseShow = Show.show[ManagerResponse] {
     case SystemStatus(seq) => seq.foldRight("")((status, str) => str + toString(status))
@@ -34,7 +41,6 @@ trait CommandLineImplicits {
        |---------------------
        |Requests:
        |${elevatorInfo._4}
-       |---------------------------------------------------------------------------------------
     """.stripMargin
   }
 
@@ -52,5 +58,26 @@ trait CommandLineImplicits {
     case Up => "up"
     case Down => "down"
   }
+
+  def printHelp: Unit = {
+    println(
+      """
+        |Options:
+        |-f, --floorCount=<value>                     set number of floors in the system
+        |-e, --elevatorCount=<value>                  set number of elevators in the system
+        |-t, --travelDuration=<value>                 set duration of travel between two consecutive floors in seconds
+        |-w, --waitingDuration=<value>                set duration of passenger loading/unloading in seconds
+        |-m, --manualStepping=<value>                 set manual time stepping of system evolution
+        |
+        |Commands:
+        |status                                       show status of all the elevators in the system
+        |call <floorNumber> {up|down}                 schedule a call request in one of the elevators
+        |land <elevatorId> <floorNumber>              send a landing request when inside an elevator
+        |help                                         print this help
+        |exit                                         quit application
+      """.stripMargin
+    )
+  }
+
 
 }

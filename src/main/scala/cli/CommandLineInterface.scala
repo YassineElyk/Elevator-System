@@ -6,16 +6,16 @@ import model.Messages._
 
 import cats.syntax.show._
 
-class CommandLineInterface(controller: ElevatorSystemController) extends CommandLineImplicits{
+class CommandLineInterface(controller: ElevatorSystemController) extends ConsoleOutput {
 
   def start: Unit = {
     println("Elevator simulation is running")
-    println("-------------------------------")
+    println("-------------------------------------------------------------------")
     mainLoop
   }
 
   def mainLoop: Unit = {
-    Command.parse(getConsoleInput) match {
+    Command.parse(getConsoleInput.trim) match {
       case Exit() =>
         println("Shutting down Elevator Simulation")
         controller.quit
@@ -33,19 +33,8 @@ class CommandLineInterface(controller: ElevatorSystemController) extends Command
 
   def getConsoleInput: String = scala.io.StdIn.readLine()
 
-  def printResponse(resp: Response): Unit = {
+  def printResponse(resp: ManagerResponse): Unit = {
     println(resp.show)
-  }
-
-  def printHelp: Unit = {
-    println(
-      """
-        |
-        |
-        |
-        |
-      """.stripMargin
-    )
   }
 
 }

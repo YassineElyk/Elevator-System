@@ -4,29 +4,37 @@ import model.Messages.FloorRequest
 import cats.Monoid
 import model.{Down, ElevatorConfig, ElevatorState, Floor, Moving, NoRequest, ReceivedRequestDirection, ReceivedRequestsProperties, Up, Waiting}
 
+/**
+  * These type class instances are helpers to represent elevator state transitions.
+  */
+
 
 trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequestsProperties{
 
   def conf: ElevatorConfig
 
+  /**
+    * Possible state transitions when the elevator is in Idle state and that happen when receiving a new request.
+    */
+
   implicit val NoRequestStateTransitions = new ElevatorTransition[NoRequest] {
     override def processRequest(request: FloorRequest)(state: NoRequest): ElevatorState = {
       if (request.floor.num < state.currentFloor.num) {
         Moving(
-          direction = Down(),
+          direction = Down,
           previousFloor = state.currentFloor,
           lastDestinationUp = None,
           lastDestinationDown = Some(request.floor),
-          destinations = addReceivedRequest(request, state.destinations)
+          destinations = addReceivedRequest(request)
         )
       }
       else if (request.floor.num > state.currentFloor.num) {
         model.Moving(
-          direction = Up(),
+          direction = Up,
           previousFloor = state.currentFloor,
           lastDestinationUp = Some(request.floor),
           lastDestinationDown = None,
-          destinations = addReceivedRequest(request, state.destinations)
+          destinations = addReceivedRequest(request)
         )
       }
       else state
@@ -34,6 +42,12 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
     override def next(state: NoRequest): NoRequest = state
   }
+
+  /**
+    * Possible state transitions when the elevator is moving and that happen when new requests or scheduled timer
+    * messages have been received.
+    */
+
 
   implicit val MovingStateTransitions = new ElevatorTransition[Moving] {
     override def processRequest(request: FloorRequest)(state: Moving): ElevatorState = {
@@ -50,13 +64,13 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
     override def next(state: Moving): ElevatorState = {
       val currentFloor = state.direction match {
-        case Up() => Floor(state.previousFloor.num + 1)
-        case Down() => Floor(state.previousFloor.num - 1)
+        case Up => Floor(state.previousFloor.num + 1)
+        case Down => Floor(state.previousFloor.num - 1)
       }
 
       val requestForNextFloor = state.destinations.getOrElse(currentFloor, Monoid[ReceivedRequestDirection].empty)
 
-      if ((state.direction == Up()) && requestForNextFloor.up || (state.direction == Down()) && requestForNextFloor.down ||
+      if ((state.direction == Up && requestForNextFloor.up) || (state.direction == Down) && requestForNextFloor.down ||
         (requestForNextFloor.floorRequest) || (currentFloor == state.lastDestinationUp.getOrElse(Floor(-1))) ||
         (currentFloor == state.lastDestinationDown.getOrElse(Floor(-1)))){
 
@@ -70,10 +84,10 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
           destinations = newDestinations
         )
       }
-      else if ((state.direction == Up() && !state.lastDestinationDown.isDefined) && requestForNextFloor != Monoid[ReceivedRequestDirection].empty){
+      else if ((state.direction == Up && !state.lastDestinationDown.isDefined) && requestForNextFloor != Monoid[ReceivedRequestDirection].empty){
         state.copy(previousFloor = currentFloor, lastDestinationDown = Some(currentFloor))
       }
-      else if ((state.direction == Down() && !state.lastDestinationUp.isDefined) && requestForNextFloor != Monoid[ReceivedRequestDirection].empty){
+      else if ((state.direction == Down && !state.lastDestinationUp.isDefined) && requestForNextFloor != Monoid[ReceivedRequestDirection].empty){
         state.copy(previousFloor = currentFloor, lastDestinationUp = Some(currentFloor))
       }
       else
@@ -81,6 +95,11 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
     }
   }
+
+  /**
+    * Possible transitions from the waiting state of the elevator.
+    */
+
 
   implicit val WaitingStateTransitions = new ElevatorTransition[Waiting] {
     override def processRequest(request: FloorRequest)(state: Waiting): ElevatorState = {
@@ -100,15 +119,15 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
       state.previousDirection match {
 
-        case Up() => state.lastDestinationUp match {
-          case None => model.NoRequest(state.currentFloor, destinations = initReceivedRequests(conf.floorCount))
+        case Up => state.lastDestinationUp match {
+          case None => model.NoRequest(state.currentFloor)
           case Some(floor) if state.currentFloor == floor =>
 
             state.lastDestinationDown match {
-              case None => NoRequest(state.currentFloor, destinations = initReceivedRequests(conf.floorCount))
+              case None => NoRequest(state.currentFloor)
               case Some(floor) =>
                 Moving(
-                  direction = Down(),
+                  direction = Down,
                   previousFloor = state.currentFloor,
                   lastDestinationUp = None,
                   lastDestinationDown = state.lastDestinationDown,
@@ -118,7 +137,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
           case Some(floor) if state.currentFloor != floor =>
             Moving(
-              direction = Up(),
+              direction = Up,
               previousFloor = state.currentFloor,
               lastDestinationUp = state.lastDestinationUp,
               lastDestinationDown = state.lastDestinationDown,
@@ -126,15 +145,15 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
             )
         }
 
-        case Down() => state.lastDestinationDown match {
-          case None => model.NoRequest(state.currentFloor, destinations = initReceivedRequests(conf.floorCount))
+        case Down => state.lastDestinationDown match {
+          case None => model.NoRequest(state.currentFloor)
           case Some(floor) if state.currentFloor == floor =>
 
             state.lastDestinationUp match {
-              case None => model.NoRequest(state.currentFloor, destinations = initReceivedRequests(conf.floorCount))
+              case None => model.NoRequest(state.currentFloor)
               case Some(floor) =>
                 Moving(
-                  direction = Up(),
+                  direction = Up,
                   previousFloor = state.currentFloor,
                   lastDestinationUp = state.lastDestinationUp,
                   lastDestinationDown = None,
@@ -144,7 +163,7 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
 
           case Some(floor) if state.currentFloor != floor =>
             Moving(
-              direction = Up(),
+              direction = Up,
               previousFloor = state.currentFloor,
               lastDestinationUp = state.lastDestinationUp,
               lastDestinationDown = state.lastDestinationDown,
@@ -152,7 +171,6 @@ trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequ
             )
         }
       }
-
     }
   }
 

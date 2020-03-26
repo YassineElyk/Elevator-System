@@ -4,7 +4,11 @@ import model.ElevatorSystemConfig
 
 import scopt.OptionParser
 
-object CommandLineOption{
+/**
+  * A parser for the options to pass when starting the program
+  */
+
+object CommandLineOption {
 
   val parser = new OptionParser[ElevatorSystemConfig]("Elevator system simulation") {
 
@@ -16,7 +20,8 @@ object CommandLineOption{
       config.copy(elevatorCount = duration))
     opt[Int]('w', "waitingDuration").action((duration, config) =>
       config.copy(elevatorCount = duration))
-
+    opt[Boolean]('m', "manualStepping").action((bool, config) =>
+      config.copy(manualStepping = bool))
   }
 
   def parse(args: Array[String]): Option[ElevatorSystemConfig] =

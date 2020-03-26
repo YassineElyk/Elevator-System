@@ -1,11 +1,12 @@
 package model
 
+/**
+  * Sealed trait of all the elevator states possible.
+  */
+
 sealed trait ElevatorState
 
-case class NoRequest(
-                      currentFloor: Floor,
-                      destinations: Map[Floor, ReceivedRequestDirection]
-                    ) extends ElevatorState
+case class NoRequest(currentFloor: Floor) extends ElevatorState
 
 case class Moving(
                    direction: Direction,
@@ -31,24 +32,47 @@ case class ElevatorConfig(
                            manualStepping: Boolean = false
                          )
 
+/**
+  * A representation of elevator Id's.
+  */
+
 case class ElevatorId(id: Int) extends AnyVal
+
+
+/**
+  * A representation of a system step message received by the elevator actor.
+  */
+
+case object ManualStep
+
+/**
+  * Messages scheduled by Akka's timer to trigger state transitions.
+  */
 
 object TimerModel {
 
-  case class WaitingAtDestination()
+  case object WaitingAtDestination
 
-  case class WaitingCompleted()
+  case object WaitingCompleted
 
-  case class MovingToNextFloor()
+  case object MovingToNextFloor
 
-  case class NextFloorReached()
+  case object NextFloorReached
 
 }
 
+/**
+  * A representation of a floor in the system.
+  */
+
 case class Floor(num: Int) extends AnyVal
 
+/**
+  * A representation of possible directions a Call or Land request can have.
+  */
+
 sealed trait Direction
-case class Up() extends Direction
-case class Down() extends Direction
-case class NoDirection() extends Direction
+case object Up extends Direction
+case object Down extends Direction
+case object NoDirection extends Direction
 

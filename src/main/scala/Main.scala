@@ -6,7 +6,7 @@ object Main extends App {
 
   CommandLineOption.parse(args) match {
     case Some(config) => startApp(config)
-    case None => println("Invalid command line options were provided")
+    case None =>
   }
 
   def startApp(config: ElevatorSystemConfig): Unit = {
