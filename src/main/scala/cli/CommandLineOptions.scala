@@ -17,9 +17,9 @@ object CommandLineOption {
     opt[Int]('e', "elevatorCount").action((count, config) =>
       config.copy(elevatorCount = count))
     opt[Int]('t', "travelDuration").action((duration, config) =>
-      config.copy(elevatorCount = duration))
+      config.copy(travelDuration = duration))
     opt[Int]('w', "waitingDuration").action((duration, config) =>
-      config.copy(elevatorCount = duration))
+      config.copy(waitingDuration = duration))
     opt[Boolean]('m', "manualStepping").action((bool, config) =>
       config.copy(manualStepping = bool))
   }

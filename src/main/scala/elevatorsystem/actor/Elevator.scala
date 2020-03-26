@@ -48,7 +48,9 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
         case s: Waiting =>
           setWaitingTimer
           context.become(Waiting(nextState.asInstanceOf[Waiting]))
-        case _ => context.become(Active(nextState.asInstanceOf[Moving]))
+        case _ =>
+          setNextFloorTimer
+          context.become(Active(nextState.asInstanceOf[Moving]))
       }
   }
 

@@ -53,7 +53,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
     "Ignore floors with requests that have a different direction (Down) as long as a further request is present" in {
       elevator ! CallRequest(Floor(6), Down)
-      elevator ! ManualStep
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -70,7 +70,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
     "Answer requests that have the same direction (Up)" in {
       elevator ! CallRequest(Floor(2), Up)
-      elevator ! ManualStep
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -101,8 +101,9 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
           )
         )
       )
-      elevator ! ManualStep
-      elevator ! ManualStep
+
+      elevator ! WaitingCompleted
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -120,8 +121,8 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
 
     "Answer floor requests" in {
       elevator ! LandRequest(ElevatorId(1), Floor(4))
-      elevator ! ManualStep
-      elevator ! ManualStep
+      elevator ! WaitingCompleted
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -140,8 +141,8 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     "Respond to requests where a pickup and floor request have been made in the same floor" in {
       elevator ! LandRequest(ElevatorId(1), Floor(5))
       elevator ! CallRequest(Floor(5), Down)
-      elevator ! ManualStep
-      elevator ! ManualStep
+      elevator ! WaitingCompleted
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -158,8 +159,8 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     }
 
     "Answer furthest call even if it has an opposite direction" in {
-      elevator ! ManualStep
-      elevator ! ManualStep
+      elevator ! WaitingCompleted
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -175,7 +176,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     }
 
     "Switch directions after responding to the furthest upward call" in {
-      elevator ! ManualStep
+      elevator ! WaitingCompleted
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -190,11 +191,11 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     }
 
     "Respond to Requests that have the same direction (Down)" in {
-      elevator ! ManualStep
-      elevator ! ManualStep
-      elevator ! ManualStep
-      elevator ! ManualStep
-      elevator ! ManualStep
+      elevator ! NextFloorReached
+      elevator ! NextFloorReached
+      elevator ! NextFloorReached
+      elevator ! NextFloorReached
+      elevator ! NextFloorReached
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(
@@ -208,7 +209,7 @@ class ElevatorActorTestSpec extends TestKit(ActorSystem("TestActorSystem")) with
     }
 
     "Become Idle again since all requests have been answered" in {
-      elevator ! ManualStep
+      elevator ! WaitingCompleted
       elevator ! GetStatus
       expectMsg(
         ElevatorStatus(

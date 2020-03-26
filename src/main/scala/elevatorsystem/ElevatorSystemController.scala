@@ -27,7 +27,7 @@ class ElevatorSystemController(config: ElevatorSystemConfig) {
     case Call(floor, direction) if floorAvailable(floor) && validateDirection(floor, config.floorCount, direction) =>
       sendCallRequest(floor, direction)
     case Land(id, floor) if elevatorIdAvailable(id) && floorAvailable(floor) => sendLandRequest(id, floor)
-    case Step() => step
+    case Step() if config.manualStepping == true => step
     case _ => NoResponse()
   }
 

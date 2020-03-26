@@ -11,6 +11,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import scala.util.{Success}
 
+import java.time.Duration
+
 /**
   * The Elevator Manager Actor is the actor that interacts with the outside of the actor system.
   * This Actor is in charge of creating new elevators, getting their statuses and assigning requests to them.
@@ -70,6 +72,6 @@ class ElevatorManager(conf: ElevatorSystemConfig) extends Actor {
 
   def createElevator(id: Int): ActorRef =
     context.actorOf(Props(new Elevator(ElevatorConfig(ElevatorId(id), conf.floorCount,
-      conf.travelDuration, conf.waitingDuration, conf.manualStepping))))
+      Duration.ofSeconds(conf.travelDuration), Duration.ofSeconds(conf.waitingDuration), conf.manualStepping))))
 
 }
