@@ -1,12 +1,12 @@
-#Elevator control System
+# Elevator control System
 
 This program is a simple simulation of an elevator control system that can handle one or more elevators.
 It records passenger calls from any of the available floors and assigns them to one of the elevators. The program
 implements a call response strategy for the elevator cabins to determine the order by which they respond to passenger calls.
 
-##Algorithm
+## Algorithm
 
-####Call logic
+#### Call logic
 In the program, call requests have a starting floor and a direction, whereas landing requests are supposed to be made from within 
 the elevator and specify a landing floor only.  
 The algorithm used for the call logic is the classic elevator algorithm (SCAN). It is based on the following rules:
@@ -16,7 +16,7 @@ The algorithm used for the call logic is the classic elevator algorithm (SCAN). 
 - Once the furthest request reached, the elevator either becomes idle again if it has no requests left or reverses its direction and 
 responds to the other requests following the same rules.
 
-####Scheduling logic
+#### Scheduling logic
 Each call request needs to be assigned to a particular elevator. We have chosen a simple scheduling algorithm (Nearest Car) based on calculating 
 a score for each elevator called figure of suitability (SN). 
 For a certain request received, SN is calculated according the the following rules:  
@@ -33,7 +33,7 @@ SN = 1
 In the program, in addition to selecting the most suitable elevators with the highest value of SN, we select among those who have equal values of SN, the elevator
 that has the least number of requests.
  
-##Implementation
+## Implementation
 This program is implemented using classic Akka actors to handle concurrent management of all elevators and their state.
 
 Each elevator's state is fully determined by the ADT `ElevatorState` which is able to store information about the current furthest received requests (in both possible directions
@@ -46,7 +46,7 @@ The evolution between different states of the system can happen either through m
 The Manager actor communicates with the outside of the Actor system through the `ElevatorSystemController` and is in charge of delegating call requests to elevators by sorting them according to their suitability score and then by the number of received requests they have.
 The Manager actor is also in charge of creating elevators and collecting their current states and presenting them to the UI.  
 
-##Bundle and run application
+## Bundle and run application
 Create an executable script to run the application using:  
 ```
 sbt pack
@@ -57,7 +57,7 @@ go to target/pack/bin and run the executable script like so:
 ./ElevatorControlSystem 
 ```
 
-##Usage
+## Usage
 
     Options:
     -f, --floorCount=<value>                     set number of floors in the system
@@ -73,7 +73,7 @@ go to target/pack/bin and run the executable script like so:
     help                                         print this help
     exit                                         quit application
 
-####Example
+#### Example
 
 Options passing:
 ```
