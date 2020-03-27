@@ -38,20 +38,20 @@ trait ConsoleOutput {
        |${elevatorInfo._1}
        |${elevatorInfo._2}
        |${elevatorInfo._3}
-       |---------------------
+       |
        |Requests:
        |${elevatorInfo._4}
     """.stripMargin
   }
 
   def toString(requests: Map[Floor, ReceivedRequestDirection]): String = {
-    requests.foldRight("")((i, s) => s + "Floor:  " + i._1.num.toString + " ||| " + toString(i._2) + "\n")
+    requests.foldRight("")((i, s) => s + "Floor " + i._1.num.toString + ": " + toString(i._2) + "\n")
   }
 
   def toString(d: ReceivedRequestDirection): String = {
-    (if (d.floorRequest) " Landing Call  " else "") +
-    (if (d.up) "Up  " else "") +
-    (if(d.down) "Down " else "")
+    (if (d.floorRequest) "Landing Call || " else "") +
+    (if (d.up) "Up || " else "") +
+    (if(d.down) "Down || " else "")
   }
 
   def toString(d: Direction): String = d match {
@@ -78,6 +78,5 @@ trait ConsoleOutput {
       """.stripMargin
     )
   }
-
 
 }

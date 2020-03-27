@@ -8,7 +8,6 @@ import model.{Down, ElevatorConfig, ElevatorState, Floor, Moving, NoRequest, Rec
   * These type class instances are helpers to represent elevator state transitions.
   */
 
-
 trait ElevatorStateTransitions extends StateTransitionImplicit with ReceivedRequestsProperties{
 
   def conf: ElevatorConfig

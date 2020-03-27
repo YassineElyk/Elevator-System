@@ -4,6 +4,7 @@ import elevatorsystem.ElevatorStateTransitions
 import model.Messages._
 import model.TimerModel._
 import model._
+
 import akka.actor.{Actor, Timers}
 
 /**
@@ -43,14 +44,13 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
     case request: FloorRequest => context.become(Active(state.processRequest(request).asInstanceOf[Moving]))
 
     case NextFloorReached|ManualStep =>
-      val nextState = state.next
-      nextState match {
-        case s: Waiting =>
+      state.next match {
+        case newState: Waiting =>
           setWaitingTimer
-          context.become(Waiting(nextState.asInstanceOf[Waiting]))
-        case _ =>
+          context.become(Waiting(newState))
+        case newState: Moving =>
           setNextFloorTimer
-          context.become(Active(nextState.asInstanceOf[Moving]))
+          context.become(Active(newState))
       }
   }
 
@@ -66,13 +66,12 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
     case request: FloorRequest => context.become(Waiting(state.processRequest(request).asInstanceOf[Waiting]))
 
     case WaitingCompleted|ManualStep =>
-      val nextState = state.next
-      nextState match {
-        case s: Moving =>
+      state.next match {
+        case newState: Moving =>
           setNextFloorTimer
-          context.become(Active(nextState.asInstanceOf[Moving]))
-        case s: NoRequest =>
-          context.become(Idle(nextState.asInstanceOf[NoRequest]))
+          context.become(Active(newState))
+        case newState: NoRequest =>
+          context.become(Idle(newState))
       }
   }
 
@@ -90,8 +89,6 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
     */
 
   def calculateSuitabilityScore(state: ElevatorState, floor: Floor, direction: Direction, fc: Int, id: ElevatorId): Score = {
-
-
     state match {
       case s: NoRequest =>
         val d = (s.currentFloor.num - floor.num).abs
@@ -104,6 +101,7 @@ class Elevator(override val conf: ElevatorConfig) extends Actor with Timers with
       case s: Moving if ((floor.num - s.previousFloor.num+1) * toInt(direction) >= 0) && (s.direction != direction) =>
         val d = (s.previousFloor.num+1 - floor.num).abs
         Score(id, fc + 1 - d, s.destinations.size)
+      case s: Waiting => calculateSuitabilityScore(s.next, floor, direction, fc, id)
     }
   }
 

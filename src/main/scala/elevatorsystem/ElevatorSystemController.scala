@@ -18,7 +18,7 @@ import scala.concurrent.duration._
 
 class ElevatorSystemController(config: ElevatorSystemConfig) {
 
-  val system = ActorSystem("ElevatorSimulation")
+  val system = ActorSystem("ElevatorControlSystem")
   val manager = system.actorOf(Props(new ElevatorManager(config)))
   implicit val timeout = Timeout(5 seconds)
 
